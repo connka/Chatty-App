@@ -17,6 +17,14 @@ class App extends Component {
       ]
   }
 }
+
+handleNewMessage = (msg) => {
+  console.log('This is a Message', msg)
+  const newMessage = {id: 7, username: "Allison", content: msg};
+  const messages = this.state.messages.concat(newMessage)
+  this.setState({messages: messages})
+}
+
   componentDidMount() {
     console.log("componentDidMount <App />");
     setTimeout(() => {
@@ -37,7 +45,7 @@ class App extends Component {
           <a href="/" className="navbar-brand">Chatty</a>
         </nav>
         <MessageList messages={this.state.messages}/>
-        <ChatBar currentUser={this.state.currentUser}/>
+        <ChatBar currentUser={this.state.currentUser} handleNewMessage={this.handleNewMessage} />
       </div>
       
     );
