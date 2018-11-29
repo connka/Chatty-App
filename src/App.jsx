@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
+import Header from './Header.jsx'
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
-
+import Notification from './Notification.jsx';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: name,
       messages: [
         {
           id: (Math.round(Math.random()*50)),
@@ -18,34 +18,40 @@ class App extends Component {
   }
 }
 
-handleNewMessage = (msg) => {
-  console.log('This is a Message', msg)
-  const newMessage = {id: 7, username: "Allison", content: msg};
-  const messages = this.state.messages.concat(newMessage)
-  this.setState({messages: messages})
-}
-
   componentDidMount() {
     console.log("componentDidMount <App />");
-    setTimeout(() => {
-      console.log("Simulating incoming message");
-      // Add a new message to the list of messages in the data store
-      const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
-      const messages = this.state.messages.concat(newMessage)
-      // Update the state of the app component.
-      // Calling setState will trigger a call to render() in App and all child components.
-      this.setState({messages: messages})
-    }, 3000);
+    this.socket = new WebSocket('ws://localhost:3001');
+    this.socket.onopen = () => {
+      this.socket.send("Connected") ;
+    }
+
+    this.socket.onmessage = (event) => {
+      console.log("Event received: ", event);
+      let data = event.data;
+        let messages = this.state.messages.concat(data)
+        this.setState({messages: messages})
+    }
   }
-  
+
+  newMessage(message) {
+    const newMessage = {id: 4, username: "Kate", content: message}
+    const messages = this.state.messages.concat(newMessage);
+    this.setState({messages: messages})
+    if (this.socket.readyState === 1) {
+      this.socket.send(JSON.stringify(message))
+    }
+  }
+
   render() {
     return (
       <div>
-        <nav className="navbar">
-          <a href="/" className="navbar-brand">Chatty</a>
-        </nav>
-        <MessageList messages={this.state.messages}/>
-        <ChatBar currentUser={this.state.currentUser} handleNewMessage={this.handleNewMessage} />
+        <Header />
+        <MessageList 
+        messages={this.state.messages}/>
+        <Notification />
+        <ChatBar 
+        currentUser={this.state.currentUser}
+        newMessage={this.newMessage.bind(this)}/>
       </div>
       
     );

@@ -1,7 +1,5 @@
 const express = require('express');
 const SocketServer = require('ws').Server;
-
-// Set the port to 3001
 const PORT = 3001;
 
 // Create a new express server
@@ -19,6 +17,11 @@ const wss = new SocketServer({ server });
 wss.on('connection', (ws) => {
     console.log('Client connected');
     ws.on("message", (msg) => {
+        wss.clients.forEach(function each(client) {
+            if (client !== ws && client.readyState === 1) {
+                client.send(msg);
+                }
+            });
         console.log(msg)
     })
     ws.send("message send")

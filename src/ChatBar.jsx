@@ -4,18 +4,25 @@ class ChatBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            message:[]
+            username:"",
+            message:[],
         }
     }
+
     handleChange(event) {
             this.setState({message: event.target.value})
     }
 
+    renderUser(message) {
+        if (message.username === '') {
+            message.username = 'Anonymous'
+        }
+    }
+
     submitNewMessage = (event) => {
         if (event.key === "Enter") {
-            this.props.handleNewMessage(this.state.message);
-            console.log("WHAT IS THIS: ", event.target.value);
-            event.target.value = "";
+            this.props.newMessage(this.state.message);
+            this.setState({message: ""});
         }
     }
 
