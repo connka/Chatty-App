@@ -3,18 +3,47 @@ import Header from './Header.jsx'
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 import Notification from './Notification.jsx';
+import UUID from 'uuid'
 
-class App extends Component {
+export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      messages: [
-        {
-          id: (Math.round(Math.random()*50)),
-          username: "Bob", 
-          content: "This is a message",
-        }
-      ]
+      id: "",
+      currentUser: {name: "Anonymous"},
+      messages: []
+    };
+  }
+
+newName = (event) => {
+if (event.key === 'Enter') {
+    if (event.target.value) {
+        this.setState({
+            currentUser: {name: event.target.value}
+        })
+    }
+  }
+}
+
+handleChange = (event) => {
+  this.setState({
+    message: event.target.value
+  });
+}
+newMessage = (event) => {
+  if (event.key === "Enter") {
+    const oldMessages = this.state.messages
+    const newMessage = {
+      id: UUID(), 
+      username: this.state.currentUser.name, 
+      content: event.target.value
+    }
+    this.setState({
+      messages: [...oldMessages, newMessage],
+      message: ""
+    })
+    if (this.socket.readyState === 1) {
+      this.socket.send(JSON.stringify(newMessage))};
   }
 }
 
@@ -27,18 +56,9 @@ class App extends Component {
 
     this.socket.onmessage = (event) => {
       console.log("Event received: ", event);
-      let data = event.data;
-        let messages = this.state.messages.concat(data)
-        this.setState({messages: messages})
-    }
-  }
-
-  newMessage(message) {
-    const newMessage = {id: 4, username: "Kate", content: message}
-    const messages = this.state.messages.concat(newMessage);
-    this.setState({messages: messages})
-    if (this.socket.readyState === 1) {
-      this.socket.send(JSON.stringify(message))
+      let msg = JSON.parse(event.data);
+      let messages = this.state.messages.concat(msg)
+      this.setState({messages: messages})
     }
   }
 
@@ -50,11 +70,14 @@ class App extends Component {
         messages={this.state.messages}/>
         <Notification />
         <ChatBar 
-        currentUser={this.state.currentUser}
-        newMessage={this.newMessage.bind(this)}/>
+          currentUser={this.state.currentUser.name}
+          newMessage={this.newMessage.bind(this)}
+          newName={this.newName}
+          handleChange={this.handleChange}
+          message={this.state.message}
+        />
       </div>
       
     );
   }
 }
-export default App;

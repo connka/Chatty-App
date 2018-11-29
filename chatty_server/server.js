@@ -1,5 +1,5 @@
 const express = require('express');
-const SocketServer = require('ws').Server;
+const SocketServer = require('ws');
 const PORT = 3001;
 
 // Create a new express server
@@ -9,7 +9,15 @@ const server = express()
     .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
 
 // Create the WebSockets server
-const wss = new SocketServer({ server });
+const wss = new SocketServer.Server({ server });
+
+wss.broadcast = function broadcast(msg) {
+    wss.clients.forEach(function each(client) {
+        if (client.readyState === SocketServer.OPEN) {
+            client.send(msg);
+        }
+    });
+};
 
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
