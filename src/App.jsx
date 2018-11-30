@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import Header from './Header.jsx'
+import Header from './Header.jsx';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
-import Notification from './Notification.jsx';
-import UUID from 'uuid'
+import UUID from 'uuid';
 
-export default class App extends Component {
+class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,11 +16,15 @@ export default class App extends Component {
 
 newName = (event) => {
 if (event.key === 'Enter') {
-    if (event.target.value) {
-        this.setState({
-            currentUser: {name: event.target.value}
-        })
-    }
+        const newUser = {
+          type: 'postNotification',
+          content: (this.state.currentUser.name + ' has changed their name to ' + event.target.value)
+      }
+      this.socket.send(JSON.stringify(newUser));
+      this.setState({
+        currentUser: {name: event.target.value}, 
+        messages: this.state.messages.concat(newUser)
+    })
   }
 }
 
@@ -34,6 +37,7 @@ newMessage = (event) => {
   if (event.key === "Enter") {
     const oldMessages = this.state.messages
     const newMessage = {
+      type: 'postMessage',
       id: UUID(), 
       username: this.state.currentUser.name, 
       content: event.target.value
@@ -50,14 +54,11 @@ newMessage = (event) => {
   componentDidMount() {
     console.log("componentDidMount <App />");
     this.socket = new WebSocket('ws://localhost:3001');
-    this.socket.onopen = () => {
-      this.socket.send("Connected") ;
-    }
 
     this.socket.onmessage = (event) => {
       console.log("Event received: ", event);
-      let msg = JSON.parse(event.data);
-      let messages = this.state.messages.concat(msg)
+      let data = JSON.parse(event.data);
+      let messages = this.state.messages.concat(data)
       this.setState({messages: messages})
     }
   }
@@ -68,7 +69,6 @@ newMessage = (event) => {
         <Header />
         <MessageList 
         messages={this.state.messages}/>
-        <Notification />
         <ChatBar 
           currentUser={this.state.currentUser.name}
           newMessage={this.newMessage.bind(this)}
@@ -81,3 +81,5 @@ newMessage = (event) => {
     );
   }
 }
+
+export default App;
