@@ -8,6 +8,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+    userCount: 0,
       id: "",
       currentUser: {name: "Anonymous"},
       messages: []
@@ -59,14 +60,23 @@ newMessage = (event) => {
       console.log("Event received: ", event);
       let data = JSON.parse(event.data);
       let messages = this.state.messages.concat(data)
-      this.setState({messages: messages})
+      if (data.type === "userCount") {
+        this.setState({userCount: data.count})
+      }
+      if (data.type === "postMessage") {
+        this.setState({messages: messages})
+      }
+      if (data.type === "postNotification") {
+        this.setState({notification: notification})
+      }
     }
   }
 
   render() {
     return (
       <div>
-        <Header />
+        <Header 
+        userCount={this.state.userCount} />
         <MessageList 
         messages={this.state.messages}/>
         <ChatBar 
@@ -76,8 +86,7 @@ newMessage = (event) => {
           handleChange={this.handleChange}
           message={this.state.message}
         />
-      </div>
-      
+      </div>      
     );
   }
 }

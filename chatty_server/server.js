@@ -16,6 +16,14 @@ const wss = new SocketServer.Server({ server });
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
     console.log('Client connected');
+    userCount = {
+        type: "userCount",
+        count: wss.clients.size
+    }
+    wss.clients.forEach(function each(client) {
+        client.send(JSON.stringify(userCount));
+    })
+
     ws.on("message", (msg) => {
         data = JSON.parse(msg);
         if(data.type === 'postMessage') {
@@ -23,18 +31,25 @@ wss.on('connection', (ws) => {
         }
         if(data.type === 'postNotification'){
             data.type = 'incomingNotification';
-        }
-        console.log("This is a thing", data)    
-         
+        }   
+        
         data = JSON.stringify(data);
         wss.clients.forEach(function each(client) {
             if (client !== ws && client.readyState === 1) {
-                console.log("Im sendng...")
                 client.send(data);
                 }
             });
     })
 
     // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-    ws.on('close', () => console.log('Client disconnected'));
-});
+    ws.on('close', () => {
+        userCount = {
+            type: "userCount",
+            count: wss.clients.size
+        }
+        wss.clients.forEach(function each(client) {
+            client.send(JSON.stringify(userCount));
+        })
+        console.log('Client disconnected');
+    })
+})

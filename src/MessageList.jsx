@@ -21,7 +21,6 @@ class MessageList extends Component {
                     <Notification
                         content={message.content}
                     />)
-
                     default:
                     throw new Error("Unknown event type " + message.type);
                 }
