@@ -11,7 +11,7 @@ class MessageList extends Component {
                 case "postMessage":
                 return (
                     <Message
-                        key={message.id}
+                        key={(Math.round(Math.random()*50))}
                         username={message.username}
                         content={message.content}
                     />)
@@ -24,7 +24,7 @@ class MessageList extends Component {
                     default:
                     throw new Error("Unknown event type " + message.type);
                 }
-        })
+            }) 
         } 
         </main>
         )   

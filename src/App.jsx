@@ -12,15 +12,23 @@ class App extends Component {
     userCount: 0,
       id: "",
       currentUser: {name: "Anonymous"},
-      messages: []
+      messages: [],
+      notification: [] 
     };
   }
 
+  handleChange = (event) => {
+    this.setState({
+      message: event.target.value
+    });
+  }
+  
   //  Allows a user to post a new name
 newName = (event) => {
 if (event.key === 'Enter') {
         const newUser = {
           type: 'postNotification',
+          username: newUser,
           content: (this.state.currentUser.name + ' has changed their name to ' + event.target.value)
       }
       this.socket.send(JSON.stringify(newUser));
@@ -31,11 +39,7 @@ if (event.key === 'Enter') {
   }
 }
 
-handleChange = (event) => {
-  this.setState({
-    message: event.target.value
-  });
-}
+
 
 //  Allows a user to post a new message
 newMessage = (event) => {
@@ -59,10 +63,10 @@ newMessage = (event) => {
   componentDidMount() {
     console.log("componentDidMount <App />");
     this.socket = new WebSocket('ws://localhost:3001');
-    this.socket.onmessage = (event) => {
-      console.log("Event received: ", event);
+    this.socket.onmessage = (msg) => {
+      console.log("Event received: ", msg);
       let data = JSON.parse(event.data);
-      let messages = this.state.messages.concat(data)
+      let messages = this.state.messages.concat(data);
       if (data.type === "userCount") {
         this.setState({userCount: data.count})
       }
@@ -70,7 +74,7 @@ newMessage = (event) => {
         this.setState({messages: messages})
       }
       if (data.type === "incomingNotification") {
-        this.setState({notification: notification})
+        this.setState({messages: messages})
       }
     }
   }
@@ -81,7 +85,8 @@ newMessage = (event) => {
         <Header 
         userCount={this.state.userCount} />
         <MessageList 
-        messages={this.state.messages}/>
+        messages={this.state.messages}
+        notification={this.state.notification}/>
         <ChatBar 
           currentUser={this.state.currentUser.name}
           newMessage={this.newMessage.bind(this)}
