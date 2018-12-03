@@ -5,11 +5,11 @@ A Slack clone project made with React.
 
 ## Screenshots
 
-!["Screenshot of a chat in session"](https://github.com/connka/Chatty-App/tree/master/docs/chatfunction.png)
+!["Screenshot of a chat in session"](https://github.com/connka/Chatty-App/blob/master/docs/chatfunction.png)
 
-!["Screenshot of a username change"](https://github.com/connka/Chatty-App/tree/master/docs/namechange.png)
+!["Screenshot of a username change"](https://github.com/connka/Chatty-App/blob/master/docs/namechange.png)
 
-!["Screenshot of past usercount change"](https://github.com/connka/Chatty-App/tree/master/docs/usercount.png)
+!["Screenshot of past usercount change"](https://github.com/connka/Chatty-App/blob/master/docs/usercount.png)
 
 ### Getting Started
 
