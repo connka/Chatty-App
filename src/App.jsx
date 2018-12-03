@@ -4,6 +4,7 @@ import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 import UUID from 'uuid';
 
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -15,6 +16,7 @@ class App extends Component {
     };
   }
 
+  //  Allows a user to post a new name
 newName = (event) => {
 if (event.key === 'Enter') {
         const newUser = {
@@ -34,6 +36,8 @@ handleChange = (event) => {
     message: event.target.value
   });
 }
+
+//  Allows a user to post a new message
 newMessage = (event) => {
   if (event.key === "Enter") {
     const oldMessages = this.state.messages
@@ -55,7 +59,6 @@ newMessage = (event) => {
   componentDidMount() {
     console.log("componentDidMount <App />");
     this.socket = new WebSocket('ws://localhost:3001');
-
     this.socket.onmessage = (event) => {
       console.log("Event received: ", event);
       let data = JSON.parse(event.data);
@@ -63,10 +66,10 @@ newMessage = (event) => {
       if (data.type === "userCount") {
         this.setState({userCount: data.count})
       }
-      if (data.type === "postMessage") {
+      if (data.type === "incomingMessage") {
         this.setState({messages: messages})
       }
-      if (data.type === "postNotification") {
+      if (data.type === "incomingNotification") {
         this.setState({notification: notification})
       }
     }

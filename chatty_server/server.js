@@ -24,8 +24,8 @@ wss.on('connection', (ws) => {
         client.send(JSON.stringify(userCount));
     })
 
-    ws.on("message", (msg) => {
-        data = JSON.parse(msg);
+    ws.on("message", (data) => {
+        data = JSON.parse(data);
         if(data.type === 'postMessage') {
             data.type = 'incomingMessage'
         }
