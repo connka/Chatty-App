@@ -5,13 +5,14 @@ import Notification from './Notification.jsx';
 class MessageList extends Component {
     render() {
         return(
-        <main> {this.props.messages.map((message) => {
+        <div className="message_container"> 
+        {this.props.messages.map((message) => {
             switch(message.type) {
                 case "incomingMessage":
                 case "postMessage":
                 return (
                     <Message
-                        key={(Math.round(Math.random()*50))}
+                        key={message.idc}
                         username={message.username}
                         content={message.content}
                     />)
@@ -26,7 +27,7 @@ class MessageList extends Component {
                 }
             }) 
         } 
-        </main>
+        </div>
         )   
     }
     

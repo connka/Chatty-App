@@ -15,8 +15,8 @@ class ChatBar extends Component {
             className="chatbar-message" 
             placeholder="Type a message and hit ENTER"
             onKeyUp={this.props.newMessage}
-            onChange={this.props.handleChange}
-            value={this.props.message}
+            // onChange={this.props.handleChange}
+            // value={this.props.message}
         /> 
     </footer>
         )

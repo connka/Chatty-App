@@ -16,12 +16,6 @@ class App extends Component {
       notification: [] 
     };
   }
-
-  handleChange = (event) => {
-    this.setState({
-      message: event.target.value
-    });
-  }
   
   //  Allows a user to post a new name
 newName = (event) => {
@@ -39,8 +33,6 @@ if (event.key === 'Enter') {
   }
 }
 
-
-
 //  Allows a user to post a new message
 newMessage = (event) => {
   if (event.key === "Enter") {
@@ -52,9 +44,10 @@ newMessage = (event) => {
       content: event.target.value
     }
     this.setState({
-      messages: [...oldMessages, newMessage],
-      message: ""
+      messages: [...oldMessages, newMessage]
     })
+    event.target.value = "";
+
     if (this.socket.readyState === 1) {
       this.socket.send(JSON.stringify(newMessage))};
   }
@@ -89,10 +82,8 @@ newMessage = (event) => {
         notification={this.state.notification}/>
         <ChatBar 
           currentUser={this.state.currentUser.name}
-          newMessage={this.newMessage.bind(this)}
+          newMessage={this.newMessage}
           newName={this.newName}
-          handleChange={this.handleChange}
-          message={this.state.message}
         />
       </div>      
     );
